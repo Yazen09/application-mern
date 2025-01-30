@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken") ;
 
 exports.register = async (req, res) => {
     try {
-        const { firstname, name, email, password, role } = req.body; // Ajout de "role"
+        const { firstname, name, email, password, isAdmin } = req.body; // Remplacer "role" par "isAdmin"
         const foundUser = await User.findOne({ email });
         if (foundUser) {
             return res.status(400).send({ errors: [{ msg: "Email déjà utilisé ..." }] });
@@ -14,13 +14,13 @@ exports.register = async (req, res) => {
         const saltRounds = 10;
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
-        // Créer un nouvel utilisateur avec le rôle
+        // Créer un nouvel utilisateur avec isAdmin
         const newUser = new User({
             firstname,
             name,
             email,
             password: hashPassword,
-            role: role || "user" // Si aucun rôle n'est spécifié, il sera "user" par défaut
+            isAdmin: isAdmin || false // Si aucun isAdmin n'est spécifié, il sera false par défaut
         });
 
         await newUser.save();
@@ -37,6 +37,7 @@ exports.register = async (req, res) => {
         res.status(400).send({ errors: [{ msg: "Essayez à nouveau" }] });
     }
 };
+
 
 exports.login = async (req, res) => {
     console.log("BODY REÇU DANS LOGIN:", req.body); // 🔥 Debug ici !
@@ -63,40 +64,39 @@ exports.login = async (req, res) => {
 }
 
 exports.updateUserPassword = async (req, res) => {
-    const { oldPassword, password , confirmedpassword } = req.body;
-    const{_id}= req.params;
+    const { oldPassword, password, confirmedpassword } = req.body;
+    const { id } = req.params; // L'ID de l'utilisateur est dans les paramètres de l'URL.
+
     try {
-      // get user
-      const user = await User.findById(req.params);
-      if (!user) {
-          return res.status(400).send('User not found');
-      }
-  
-      // validate old password
-      const isValidPassword = await bcrypt.compare(oldPassword, user.password);
-      if (!isValidPassword) {
-          return res.status(400).send({ errors : [{ msg : "Veuillez vérifier votre ancien mot de passe "}]});
-      }
-      
-        if (password !== confirmedpassword)
-        {
-          return res.status(400).send({ errors : [{ msg : "Veuillez vérifier votre nouveau mot de passe "}]});
+        const user = await User.findById(id); // Utilisez l'ID extrait de req.params
+        if (!user) {
+            return res.status(400).send('User not found');
         }
-      // hash new password
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // update user's password
-      user.password = hashedPassword;
-  
-      const updatedUserPassword = await user.save();
-  
-      return res.json({success : [{msg:"Votre mot de passe a été modifié avec succès"}] ,user : updatedUserPassword});
-  
+
+        const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+        if (!isValidPassword) {
+            return res.status(400).send({ errors: [{ msg: "Veuillez vérifier votre ancien mot de passe "} ] });
+        }
+
+        if (password !== confirmedpassword) {
+            return res.status(400).send({ errors: [{ msg: "Les mots de passe ne correspondent pas "} ] });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+
+        const updatedUserPassword = await user.save();
+
+        return res.json({
+            success: [{ msg: "Votre mot de passe a été modifié avec succès" }],
+            user: updatedUserPassword
+        });
+
     } catch (err) {
-      return res.status(400).send({errors : [{ msg : "Veuillez réessayer ultérieurement "}]});
+        return res.status(400).send({ errors: [{ msg: "Veuillez réessayer ultérieurement "} ] });
     }
-  };
-  
+};
+
 
   // Voir tous les utilisateurs (Admin uniquement)
 exports.getAllUsers = async (req, res) => {
