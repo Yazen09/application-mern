@@ -4,7 +4,7 @@ import { ADD_CONTACT, FAIL_CONTACTS, GET_CONTACT, GET_CONTACTS, LOAD_CONTACTS } 
 export const getContacts = () => async (dispatch) => {
     dispatch({ type: LOAD_CONTACTS });
     try {
-        let result = await axios.get("/api/contact/alluser");
+        let result = await axios.get("/api/contacts/alluser");
         dispatch({ type: GET_CONTACTS, payload: result.data });
     } catch (error) {
         dispatch({ type: FAIL_CONTACTS, payload: error.response });
@@ -19,7 +19,7 @@ export const addContact = (newContact, navigate) => async (dispatch) => {
                 authorization: localStorage.getItem("token"),
             },
         };
-        let result = await axios.post("/api/contact/add-contact", newContact, config);
+        let result = await axios.post("/api/contacts/add-contact", newContact, config);
         dispatch({ type: ADD_CONTACT, payload: result.data });
         navigate('/listcontacts');
         dispatch(getContacts());
@@ -31,23 +31,23 @@ export const addContact = (newContact, navigate) => async (dispatch) => {
 export const deleteContact = (id) => async (dispatch) => {
     dispatch({ type: LOAD_CONTACTS });
     try {
-        await axios.delete(`/api/contact/${id}`);
+        await axios.delete(`/api/contacts/${id}`);
         dispatch(getContacts());
     } catch (error) {
         dispatch({ type: FAIL_CONTACTS, payload: error.response });
     }
 };
 
-// ✅ Modification ici pour inclure la redirection
+
 export const editContact = (id, newContact, navigate) => async (dispatch) => {
     dispatch({ type: LOAD_CONTACTS });
     try {
-        await axios.put(`/api/contact/${id}`, newContact);
-        dispatch({ type: "EDIT_CONTACT" }); // ✅ Confirme que l'édition a réussi
-        navigate("/listcontacts"); // ✅ Redirige après édition
+        await axios.put(`/api/contacts/${id}`, newContact);
+        dispatch({ type: "EDIT_CONTACT" }); 
+        navigate("/listcontacts"); 
         dispatch(getContacts());
         setTimeout(() => {
-            dispatch({ type: "RESET_EDIT_SUCCESS" }); // ✅ Réinitialise l'état après la redirection
+            dispatch({ type: "RESET_EDIT_SUCCESS" }); 
         }, 500);
     } catch (error) {
         dispatch({ type: FAIL_CONTACTS, payload: error.response });

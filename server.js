@@ -8,7 +8,9 @@ connectDB() ;
 app.use("/api/contacts" , require("./routes/contact") )
 app.use("/api/user",require("./routes/user"))
 const PORT = process.env.PORT
-
+var cors = require('cors')
+ 
+app.use(cors())
 app.listen(PORT , error=> {
     error ? console.error(`fail to connect , ${error}`) : 
     console.log(`Server is running at ${PORT}`)

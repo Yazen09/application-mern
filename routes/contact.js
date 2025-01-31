@@ -5,7 +5,7 @@ const upload = require("../middlewares/multer");
 const { isAuth } = require('../middlewares/isAuth');
 const router = express.Router()
 
-router.post("/add-contact" ,isAuth ,upload.single("image"), async(req,res) =>{
+router.post("/add-contact"  ,upload.single("image"), async(req,res) =>{
     try {
         const result = await cloudinary.uploader.upload(req.file.path);
         

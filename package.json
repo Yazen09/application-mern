@@ -15,9 +15,12 @@
   "author": "nael",
   "license": "ISC",
   "dependencies": {
+    "@mui/icons-material": "^6.4.2",
+    "@mui/material": "^6.4.2",
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.37.0",
     "concurrently": "^8.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
