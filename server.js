@@ -5,9 +5,10 @@ require("dotenv").config();
 console.log("Cloudinary Config:", process.env.CLOUD_NAME, process.env.API_KEY, process.env.API_SECRET);
 const connectDB = require("./config/connectDB");
 connectDB() ;
-app.use("/api/contacts" , require("./routes/contact") )
+app.use("/api/products", require("./routes/product"));
+
 app.use("/api/user",require("./routes/user"))
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 2025;
 var cors = require('cors')
  
 app.use(cors())

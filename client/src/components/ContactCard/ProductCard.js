@@ -8,13 +8,12 @@ import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { deleteContact } from "../../JS/Actions/contact";
+import { deleteProduct } from "../../JS/Actions/product";
 
-const ContactCard = ({ contact }) => { 
+const ProductCard = ({ product }) => { 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state) => state.userReducer.user);
-    console.warn(user);
     const isAdmin = user?.isAdmin;
 
     return (
@@ -22,24 +21,26 @@ const ContactCard = ({ contact }) => {
             <Card sx={{ maxWidth: 400, width: 300, mb: "6%" }}>
                 <CardMedia
                     sx={{ height: 140 }}
-                    image={contact.profile_img}
-                    title={contact.name}
+                    image={product.product_img}
+                    title={product.reference} 
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                        {contact.name}
+                        {product.reference} 
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {contact.email}
+                        Catégorie : {product.categorie}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {contact.phone}
+                        Numéro de série : {product.numserie} 
                     </Typography>
                 </CardContent>
                 {isAdmin && (
                     <CardActions>
-                        <Button size="small" variant="contained" color="success" onClick={() => navigate(`/EditContact/${contact._id}`)}>Edit</Button>
-                        <Button size="small" color="error" variant="contained" onClick={() => dispatch(deleteContact(contact._id))}>Delete <DeleteOutlineIcon sx={{ color: "white" }} /></Button>
+                        <Button size="small" variant="contained" color="success" onClick={() => navigate(`/EditProduct/${product._id}`)}>Edit</Button>
+                        <Button size="small" color="error" variant="contained" onClick={() => dispatch(deleteProduct(product._id))}>
+                            Delete <DeleteOutlineIcon sx={{ color: "white" }} />
+                        </Button>
                     </CardActions>
                 )}
             </Card>
@@ -47,4 +48,4 @@ const ContactCard = ({ contact }) => {
     );
 };
 
-export default ContactCard;
+export default ProductCard;
